@@ -288,11 +288,12 @@ static int cpufreq_stat_notifier_trans(struct notifier_block *nb,
 	old_index = stat->last_index;
 	new_index = freq_table_get_index(stat, freq->new);
 
-	cpufreq_stats_update(freq->cpu);
-	if (old_index == new_index)
+	if (old_index == -1 || new_index == -1)
 		return 0;
 
-	if (old_index == -1 || new_index == -1)
+	cpufreq_stats_update(freq->cpu);
+  
+        if (old_index == new_index)
 		return 0;
 
 	spin_lock(&cpufreq_stats_lock);
@@ -349,8 +350,7 @@ static int __cpuinit cpufreq_stat_cpu_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-static struct notifier_block cpufreq_stat_cpu_notifier __refdata =
-{
+static struct notifier_block cpufreq_stat_cpu_notifier __refdata ={
 	.notifier_call = cpufreq_stat_cpu_callback,
 	.priority = 1,
 };
